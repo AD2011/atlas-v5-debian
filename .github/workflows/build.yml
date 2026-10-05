@@ -1,0 +1,49 @@
+name: Build Atlas image
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - build.sh
+      - build.env
+      - scripts/**
+      - tools/**
+      - README.md
+      - .github/workflows/build.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 90
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Build and verify in disposable ARM64 container
+        run: bash build.sh
+      - name: Upload transfer ZIP and verification reports
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: atlas-v5-${{ github.run_number }}
+          path: |
+            dist/atlas-v5-probe-files.zip
+            dist/probe-SHA256SUMS
+            dist/build-info.txt
+            dist/kernel-source.sha256
+            dist/kernel.config
+            dist/packages.tsv
+            dist/qa-image.txt
+            dist/qa-rescue.txt
+            dist/memory-layout.txt
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
