@@ -1,4 +1,5 @@
-git 
+# Minimal Debian 13 for RIPE Atlas Probe v5
+
 Build and install a small Debian ARM64 system on the RIPE Atlas v5, keeping the existing CZ.NIC secure firmware and U-Boot. This is a community conversion guide, not an official RIPE image. Replacing the Atlas filesystem removes the probe software and its local data. Save a verified factory backup before installing.
 
 **Default login: `atlas` / `Ch@nge!Me(26)`. Change this password on the first boot through UART.** The password is expired in the image. SSH stays disabled until you complete that console password change, then accepts your new password or an installed public key. Root login is locked; use `sudo` with your new password.
